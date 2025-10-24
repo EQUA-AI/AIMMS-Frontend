@@ -1,2 +1,0 @@
-[inventree_plugins]
-EpconBrandingPlugin = epcon_branding.core:EpconBrandingPlugin
