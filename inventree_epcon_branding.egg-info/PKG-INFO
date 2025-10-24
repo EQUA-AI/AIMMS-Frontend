@@ -1,0 +1,72 @@
+Metadata-Version: 2.4
+Name: inventree-epcon-branding
+Version: 1.0.0
+Summary: InvenTree plugin to change branding from InvenTree to Epcon AIMMS
+Author: Epcon
+Author-email: Epcon <admin@epcon.com>
+License: MIT
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: inventree>=0.13.0
+Dynamic: author
+Dynamic: license-file
+
+# Epcon AIMMS Branding Plugin for InvenTree
+
+This plugin changes the "InvenTree" branding text in the left sidebar to "Epcon AIMMS".
+
+## Installation
+
+### Method 1: Install from source (Recommended for development)
+
+1. Navigate to the plugin directory:
+```bash
+cd /Users/srikantnaidu/EpconBrandingPlugin
+```
+
+2. Install the plugin in editable mode:
+```bash
+pip install -e .
+```
+
+3. Restart your InvenTree server
+
+4. Enable the plugin in the InvenTree admin interface:
+   - Go to Settings → Admin Center → Plugins
+   - Find "Epcon AIMMS Branding"
+   - Click "Activate"
+   - Make sure "Enable interface integration" is turned ON
+
+### Method 2: Copy to plugins directory
+
+1. Build the frontend assets:
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+2. Copy the entire `epcon_branding` directory to your InvenTree plugins directory:
+```bash
+cp -r epcon_branding /path/to/inventree-data/plugins/
+```
+
+3. Restart your InvenTree server and enable the plugin
+
+## Features
+
+- Replaces "InvenTree" text with "Epcon AIMMS" in the sidebar header
+- Uses CSS injection for seamless integration
+- No modification to core InvenTree files required
+
+## Configuration
+
+Once enabled, the plugin will automatically inject custom CSS to replace the branding text.
+
+## Development
+
+To modify the branding text:
+1. Edit `frontend/src/BrandingOverride.tsx`
+2. Rebuild the frontend: `cd frontend && npm run build`
+3. Restart InvenTree server

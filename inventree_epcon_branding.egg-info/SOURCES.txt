@@ -1,0 +1,14 @@
+LICENSE
+MANIFEST.in
+README.md
+pyproject.toml
+setup.py
+epcon_branding/__init__.py
+epcon_branding/core.py
+epcon_branding/static/BrandingOverride.js
+inventree_epcon_branding.egg-info/PKG-INFO
+inventree_epcon_branding.egg-info/SOURCES.txt
+inventree_epcon_branding.egg-info/dependency_links.txt
+inventree_epcon_branding.egg-info/entry_points.txt
+inventree_epcon_branding.egg-info/requires.txt
+inventree_epcon_branding.egg-info/top_level.txt
