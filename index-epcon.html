@@ -1,0 +1,200 @@
+{% load spa_helper %}
+{% load inventree_extras %}
+{% spa_bundle as bundle %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% inventree_instance_name %}</title>
+  {% include "favicon.html" %}
+</head>
+
+<body>
+  <div id="root">
+    <div id="update-warning" style="display: none;">
+      If you see this text there might be an issue with your update.
+      <br>
+      See <a href="https://docs.inventree.org/en/stable/settings/error_codes/#inve-e1">INVE-E1</a> in the docs for help.
+    </div>
+    <div id="no-javascript-warning" style="display: none;">
+      <hr>
+      This application requires JavaScript to function correctly. Please enable JavaScript in your browser settings.
+    </div>
+    <noscript>
+      <!-- fallback if javascript is blocked -->
+      <style>
+        #update-warning { display: block !important; }
+        #no-javascript-warning { display: block !important; }
+      </style>
+    </noscript>
+    <script>
+      setTimeout(() => {
+        let warningElement = document.getElementById('update-warning');
+
+        if (warningElement) {
+          warningElement.style.display = 'block';
+        }
+      }, 1000);
+    </script>
+  </div>
+
+  <div id="spa_settings">{% spa_settings %}</div>
+  {% if bundle == "NOT_FOUND" %}
+  <div id="spa_bundle_error">
+    <div>
+      <h1>INVE-E1 - No frontend included</h1>
+      <p>The frontend bundle could not be found. Please check that your deployment method includes the bundle or check the <a href="https://docs.inventree.org/en/stable/faq/">FAQ</a>.<br/>
+          <span>Install method: <code>{% inventree_installer %}</code></span></p>
+  </div>
+  {% else %}
+  <div id="spa_bundle">{{ bundle }}</div>
+  {% endif %}
+  
+  <!-- Epcon AIMMS Branding Override -->
+  <script>
+  (function() {
+      'use strict';
+      console.log('🚀 Epcon AIMMS Branding: Initializing...');
+      
+      let replacementCount = 0;
+      
+      function replaceAllInvenTree() {
+          // Replace in ALL text nodes (no filtering)
+          const walker = document.createTreeWalker(
+              document.body,
+              NodeFilter.SHOW_TEXT,
+              null
+          );
+          
+          const nodes = [];
+          let node;
+          
+          while (node = walker.nextNode()) {
+              if (node.nodeValue && (/InvenTree/i.test(node.nodeValue) || /Manufacturing/i.test(node.nodeValue))) {
+                  nodes.push(node);
+              }
+          }
+          
+          nodes.forEach(n => {
+              const before = n.nodeValue;
+              n.nodeValue = n.nodeValue.replace(/InvenTree/gi, 'Epcon AIMMS');
+              n.nodeValue = n.nodeValue.replace(/Manufacturing/gi, 'Machines');
+              if (n.nodeValue !== before) replacementCount++;
+          });
+          
+          // Also replace in document title
+          if (document.title.includes('InvenTree')) {
+              document.title = document.title.replace(/InvenTree/gi, 'Epcon AIMMS');
+              replacementCount++;
+          }
+          if (document.title.includes('Manufacturing')) {
+              document.title = document.title.replace(/Manufacturing/gi, 'Machines');
+              replacementCount++;
+          }
+          
+          if (replacementCount > 0) {
+              console.log('✅ Epcon AIMMS Branding: ' + replacementCount + ' replacements made');
+          }
+      }
+      
+      function replaceLogos() {
+          // Find all images and replace InvenTree logos with Equa logo
+          const images = document.querySelectorAll('img[src*="inventree"], img[src*="logo"], img[alt*="InvenTree"], img[alt*="logo"]');
+          
+          images.forEach(img => {
+              // Replace the logo source
+              img.src = '/static/plugins/epcon-branding/equa-logo.png';
+              img.alt = 'Epcon AIMMS';
+              img.title = 'Epcon AIMMS';
+              
+              // Ensure proper sizing
+              if (!img.style.maxHeight) {
+                  img.style.maxHeight = '40px';
+              }
+              if (!img.style.height) {
+                  img.style.height = 'auto';
+              }
+              if (!img.style.width) {
+                  img.style.width = 'auto';
+              }
+              img.style.objectFit = 'contain';
+              
+              console.log('🖼️ Replaced logo:', img);
+          });
+          
+          // Also find any SVG logos
+          const svgs = document.querySelectorAll('svg[class*="logo"], svg[class*="brand"]');
+          svgs.forEach(svg => {
+              // Replace SVG with image element
+              const img = document.createElement('img');
+              img.src = '/static/plugins/epcon-branding/equa-logo.png';
+              img.alt = 'Epcon AIMMS';
+              img.title = 'Epcon AIMMS';
+              img.style.maxHeight = '40px';
+              img.style.height = 'auto';
+              img.style.width = 'auto';
+              img.style.objectFit = 'contain';
+              
+              if (svg.parentNode) {
+                  svg.parentNode.replaceChild(img, svg);
+                  console.log('🖼️ Replaced SVG logo with image');
+              }
+          });
+          
+          // Find brand/logo containers and inject image if needed
+          const brandContainers = document.querySelectorAll('[class*="brand"], [class*="logo"], [data-testid*="logo"], [data-testid*="brand"]');
+          brandContainers.forEach(container => {
+              // Check if it doesn't already have our logo
+              const hasLogo = container.querySelector('img[src*="equa-logo"]');
+              if (!hasLogo) {
+                  // Look for existing images to replace
+                  const existingImg = container.querySelector('img');
+                  if (existingImg) {
+                      existingImg.src = '/static/plugins/epcon-branding/equa-logo.png';
+                      existingImg.alt = 'Epcon AIMMS';
+                      existingImg.title = 'Epcon AIMMS';
+                      existingImg.style.maxHeight = '40px';
+                      existingImg.style.height = 'auto';
+                      existingImg.style.width = 'auto';
+                      existingImg.style.objectFit = 'contain';
+                      console.log('🖼️ Replaced logo in brand container');
+                  }
+              }
+          });
+      }
+      
+      function applyAllBranding() {
+          replaceAllInvenTree();
+          replaceLogos();
+      }
+      
+      // Run immediately and repeatedly
+      applyAllBranding();
+      setTimeout(applyAllBranding, 50);
+      setTimeout(applyAllBranding, 100);
+      setTimeout(applyAllBranding, 300);
+      setTimeout(applyAllBranding, 500);
+      setTimeout(applyAllBranding, 1000);
+      setTimeout(applyAllBranding, 2000);
+      setTimeout(applyAllBranding, 3000);
+      
+      // Watch for ALL changes
+      const observer = new MutationObserver(() => {
+          setTimeout(applyAllBranding, 10);
+      });
+      
+      observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          characterData: true
+      });
+      
+      console.log('👀 Epcon AIMMS Branding: Observer active');
+  })();
+  </script>
+</body>
+
+</html>
